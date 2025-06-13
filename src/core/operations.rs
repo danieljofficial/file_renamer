@@ -1,4 +1,8 @@
 use std::{fs, path::{Path, PathBuf}};
+// use crate::{core::{operations, rename::{self, RenameStrategy}}, RenameOptions};
+
+use crate::{core::rename::{self, RenameStrategy}, RenameOptions};
+
 use super::error::PathError;
 use super::options::ListOptions;
 
@@ -59,4 +63,28 @@ fn list_paths_recursive(path: &Path, options: &ListOptions, result: &mut Vec<Pat
 
     }
     Ok(())
+}
+
+pub fn rename_files(
+    files: &[PathBuf],
+    strategy: &dyn RenameStrategy,
+    options: &RenameOptions
+) -> Result<(), PathError> {
+    for source in files {
+        let destination = strategy.generate_name(source)?;
+
+        rename::validate_rename(source, &destination)?;
+
+        if options.dry_run {
+            println!("Would rename {} to {}", source.display(), destination.display());
+        continue;
+        }
+
+        perform_rename(source, &destination, options)?;
+    };
+    Ok(())
+}
+
+fn perform_rename(source: &Path, destination: &Path, options: &RenameOptions) -> Result<(), PathError> {
+    unimplemented!()
 }

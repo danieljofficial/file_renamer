@@ -4,7 +4,15 @@ use std::{io::Error, path::PathBuf};
 pub enum PathError {
     NotFound(PathBuf),
     NotADirectory(PathBuf),
-    IoError(Error)    
+    IoError(Error),
+    RenameFailed {
+        source: PathBuf,
+        destinaiton: PathBuf,
+        cause: Error,
+    },
+    InvalidFileRenamePattern,
+    DestinationExists(PathBuf),
+    ValidationFailed(&'static str)   
 }
 
 impl From<Error> for PathError {
@@ -19,7 +27,11 @@ impl std::fmt::Display for PathError {
             PathError::NotADirectory(path) => write!(f, "Path '{}' is not a directory!", path.display()),
             PathError::NotFound(path) => write!(f, "'{}' dooes not exist!", path.display()),
             PathError::IoError(error) => write!(f, "IO error: {}", error),
-        }
+            PathError::RenameFailed { source, destinaiton, cause } => todo!(),
+            PathError::InvalidFileRenamePattern => todo!(),
+            PathError::DestinationExists(path_buf) => todo!(),
+            PathError::ValidationFailed(_) => todo!(),
+                    }
     }
 }
 
