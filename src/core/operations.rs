@@ -6,7 +6,7 @@ use std::{
 
 use crate::{
   ConflictResolution, RenameOptions,
-  core::rename::{self, RenameStrategy, validator},
+  core::rename::{RenameStrategy, validator},
 };
 
 use super::error::PathError;
@@ -116,7 +116,7 @@ fn perform_rename(
       ConflictResolution::Overwrite if options.overwrite => {
         fs::remove_file(destination).map_err(|e| PathError::RenameFailed {
           source: source.to_path_buf(),
-          destinaiton: destination.to_path_buf(),
+          destination: destination.to_path_buf(),
           cause: e,
         })?;
       }
@@ -130,7 +130,7 @@ fn perform_rename(
 
   fs::rename(source, destination).map_err(|e| PathError::RenameFailed {
     source: source.to_path_buf(),
-    destinaiton: destination.to_path_buf(),
+    destination: destination.to_path_buf(),
     cause: e,
   })
 }

@@ -11,7 +11,7 @@ pub trait RenameStrategy {
 #[derive(Debug)]
 pub struct PatternRename {
   pattern: String,
-  compiled: Regex,
+  _compiled: Regex,
   current_index: usize,
 }
 
@@ -19,19 +19,22 @@ impl PatternRename {
   pub fn new(pattern: String) -> Result<Self, PathError> {
     validator::validate_pattern(&pattern)?;
 
-    let regex_pattern = pattern
-      .replace("{name}", "(?P<name>[^/]+?)")
-      .replace("{ext}", "(?P<ext>\\.[^.]+)?")
-      .replace("{parent}", "(?P<parent>[^/]+)")
-      .replace("{i}", "(?P<i>\\d+)")
-      .replace("{date}", "(?P<date>\\d{4}-\\d{2}-\\d{2})");
+    // let regex_pattern = pattern
+    //   .replace("{name}", "(?P<name>[^/]+?)")
+    //   .replace("{ext}", "(?P<ext>\\.[^.]+)?")
+    //   .replace("{parent}", "(?P<parent>[^/]+)")
+    //   .replace("{i}", "(?P<i>\\d+)")
+    //   .replace("{date}", "(?P<date>\\d{4}-\\d{2}-\\d{2})");
 
-    let compiled = Regex::new(&format!("^{}$", regex_pattern))
+    // let compiled = Regex::new(&format!("^{}$", regex_pattern))
+    //   .map_err(|_| PathError::InvalidFileRenamePattern)?;
+
+    let compiled = Regex::new(&build_regex_pattern(&pattern))
       .map_err(|_| PathError::InvalidFileRenamePattern)?;
 
     Ok(Self {
       pattern,
-      compiled,
+      _compiled: compiled,
       current_index: 0,
     })
   }
@@ -56,6 +59,7 @@ impl PatternRename {
     let now = chrono::Local::now().format("%Y-%m-%d").to_string();
 
     let mut result = self.pattern.clone();
+    // let dotted_ext = format!(".{}", extension);
 
     result = result.replace("{name}", file_stem);
     result = result.replace("{parent}", parent);
@@ -75,4 +79,14 @@ impl RenameStrategy for PatternRename {
 
     Ok(parent_dir.join(new_name))
   }
+}
+
+fn build_regex_pattern(pattern: &str) -> String {
+  pattern
+    .replace("{name}", "(?P<name>[^/]+?)")
+    // .replace("{ext}", "(?P<ext>\\.[^.]+)?")
+    .replace("{ext}", "(?P<ext>\\.+)?")
+    .replace("{parent}", "(?P<parent>[^/]+)")
+    .replace("{i}", "(?P<i>\\d+)")
+    .replace("{date}", "(?P<date>\\d{4}-\\d{2}-\\d{2})")
 }

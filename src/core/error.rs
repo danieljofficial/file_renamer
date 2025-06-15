@@ -54,4 +54,11 @@ impl std::fmt::Display for PathError {
   }
 }
 
-impl std::error::Error for PathError {}
+impl std::error::Error for PathError {
+  fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+    match self {
+      PathError::IoError(e) | PathError::RenameFailed { cause: e, .. } => Some(e),
+      _ => None,
+    }
+  }
+}
