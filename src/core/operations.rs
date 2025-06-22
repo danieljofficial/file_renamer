@@ -84,7 +84,6 @@ pub fn rename_files(
   for (i, source) in files.iter().enumerate() {
     let destination = strategy.generate_name(source)?;
 
-    // rename::validate_rename(source, &destination)?;
     validator::validate_rename(source, &destination)?;
 
     if options.dry_run {

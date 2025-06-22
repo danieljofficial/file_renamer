@@ -12,7 +12,8 @@ pub mod tests {
       include_directories: false,
       ..Default::default()
     };
-    let result = list_paths(temp_dir.path().to_str().unwrap(), &options).unwrap();
+    let result: Vec<std::path::PathBuf> =
+      list_paths(temp_dir.path().to_str().unwrap(), &options).unwrap();
     assert_eq!(result.len(), 2);
     assert!(result.iter().any(|p| p.ends_with("file1.txt")));
     assert!(result.iter().any(|p| p.ends_with("file2.rs")));

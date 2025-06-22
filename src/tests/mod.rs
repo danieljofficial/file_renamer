@@ -1,3 +1,4 @@
+pub mod cli_tests;
 pub mod helpers;
 pub mod list_paths_tests;
 pub mod rename_tests;

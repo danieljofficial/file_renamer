@@ -5,7 +5,7 @@ use clap::{Parser, Subcommand};
 use crate::{ListOptions, PatternRename, RenameOptions, core::list_paths, rename_files};
 
 #[derive(Parser)]
-#[command(name = "renamer")]
+#[command(name = "rename")]
 #[command(about = "File renamer", version, long_about = None)]
 pub struct Cli {
   #[command(subcommand)]
@@ -16,15 +16,16 @@ pub struct Cli {
 enum Commands {
   Rename {
     /// Root dir
-    #[arg(short, long, default_value = ".")]
+    #[arg(short = 'd', long, default_value = ".")]
     path: PathBuf,
 
     /// file name pattern
-    #[arg(short, long)]
+    #[arg(short = 'p', long)]
+    // #[arg(long)]
     pattern: Option<String>,
 
     /// Rename pattern
-    #[arg(short, long)]
+    #[arg(short = 'r', long)]
     rename: String,
 
     /// Include hidden options
@@ -32,7 +33,7 @@ enum Commands {
     hidden: bool,
 
     /// Recursive search
-    #[arg(short, long)]
+    #[arg(short = 'R', long)]
     recursive: bool,
 
     /// Dry run (show changes without applying)
@@ -54,7 +55,7 @@ pub fn run() -> anyhow::Result<()> {
       dry_run,
     } => {
       let list_options = ListOptions {
-        recursive: true,
+        recursive,
         include_hidden: hidden,
         extensions: pattern.map(|p| vec![p.replace("*.", "")]),
         ..Default::default()

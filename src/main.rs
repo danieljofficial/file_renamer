@@ -1,4 +1,4 @@
-use file_renamer::core::cli::cli;
+use ichimonji::core::cli::cli;
 
 fn main() {
   if let Err(e) = cli::run() {
